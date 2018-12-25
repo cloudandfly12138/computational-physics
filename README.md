@@ -18,3 +18,12 @@
 ### 说明
 - using **matlab** and **python** in file folder named m and py,respectively.  
 - the full questions and more introduction are in the **tex** directory.
+
+## HomeWork3
+### 问题
+1. MonteCarlo方法计算积分(平均值法&投点法)
+2. MonteCarlo方法抽样(舍选法&反函数法)
+### 说明
+- using **python**
+- full questions are in .docx
+- .py is based on the given .pdf
