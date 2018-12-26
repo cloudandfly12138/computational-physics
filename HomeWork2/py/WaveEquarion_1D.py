@@ -9,10 +9,13 @@ plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文标签
 plt.rcParams['axes.unicode_minus']=False #用来正常显示负号
 #有中文出现的情况，需要u'内容'
 
-t0=0;  tn=1;  tau=1E-5; n=int((tn-t0)/tau)
-x0=0; xn=1; h=0.01;  N=int((xn-x0)/h);  x=np.linspace(x0,xn,N+1)
+t0=0;  tn=1;  tau=1.25E-5; n=int((tn-t0)/tau)
+x0=0; xi=0.5; xn=1; h1=0.005; h2=0.0025  #x在(0,0.5)和(0.5,1)采用不同步长
+N1=int((xi-x0)/h1); N2=int((xn-xi)/h2); N=N1+N2
+x1=np.linspace(x0,xi,N1+1); x2=np.linspace(xi+h2,xn,N2)
+x=np.r_[x1,x2]
 v1=300; v2=150
-lambda1=v1*tau/h;   lambda2=v2*tau/h
+lambda1=v1*tau/h1;   lambda2=v2*tau/h2 #lambda1==lambda2==0.75 在（sqrt(2)/2, 1）之间
 
 #初始条件 和 边界条件
 y=np.zeros((3,N+1))  #初始化
@@ -25,9 +28,9 @@ y[:,0]=0   #x=0边界条件 #de了我一个晚上将加半个下午的BUG!!!!!
 fig=plt.figure()
 plt.ion() #plot打开交互模式
 #求解
-for l in range(100):  #时间 求1E-3时range内为100,1E-2时为1000
+for l in range(800):  #时间 求t=1E-3时range内为80,1E-2时为800
     for i in range(1,N):
-        if(x[i]>0 and x[i]<0.5):
+        if(x[i]>0 and x[i]<xi):  #lambda1==lambda2,实际不用分支结构就行.
             y[2][i] = (2-2*lambda1**2)*y[1][i] + lambda1**2*(y[1][i+1]+y[1][i-1]) - y[0][i]
         else:
             y[2][i] = (2-2*lambda2**2)*y[1][i] + lambda2**2*(y[1][i+1]+y[1][i-1]) - y[0][i]
@@ -35,7 +38,7 @@ for l in range(100):  #时间 求1E-3时range内为100,1E-2时为1000
     plt.pause(0.01); plt.clf()  #暂停+清除当前图像
     plt.plot(x,y[2]) 
     plt.xlabel('x'); plt.ylabel('y'); plt.grid()
-    plt.axis([0,1,-0.5,0.5])
+    plt.axis([0,1,-1,1])
     t=(l+1)*tau;  plt.title(u't=%.5f时刻波形图'%t)
     y[0]=y[1];  y[1]=y[2]
 plt.ioff() #plot关闭交互模式
